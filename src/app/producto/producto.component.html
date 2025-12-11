@@ -1,0 +1,9 @@
+<div>
+  <div *ngIf="loading">
+    <p>Cargando productos...</p>
+  </div>
+  <div *ngIf="!loading">
+    <h2>Datos productos:</h2>
+    <pre>{{ productos | json }}</pre>
+  </div>
+</div>
