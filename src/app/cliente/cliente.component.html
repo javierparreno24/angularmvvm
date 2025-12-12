@@ -1,32 +1,53 @@
-<div>
-  <div *ngIf="loading">
-    <p>Cargando clientes...</p>
-  </div>
-  <div *ngIf="!loading && clientes.length > 0">
-    <table class="clients-table">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Nombre</th>
-          <th>Email</th>
-          <th>Teléfono</th>
-          <th>Operaciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let cliente of clientes; let i = index">
-          <td>{{ i + 1 }}</td>
-          <td>{{ cliente.nombre }}</td>
-          <td>{{ cliente.email }}</td>
-          <td>{{ cliente.telefono }}</td>
-          <td class="operations">
-            <button class="delete-btn">X</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div *ngIf="!loading && clientes.length === 0">
-    <p>No hay clientes disponibles</p>
+<div class="cliente-page">
+  <div class="list-card full-width">
+    <h3>Lista de clientes</h3>
+    <div *ngIf="loading">
+      <p>Cargando clientes...</p>
+    </div>
+    <div *ngIf="!loading && clientes.length > 0">
+      <table class="clients-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Teléfono</th>
+            <th>Operaciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let cliente of clientes; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ cliente.nombre }}</td>
+            <td>{{ cliente.email }}</td>
+            <td>{{ cliente.telefono }}</td>
+            <td class="operations">
+              <button type="button" class="update-btn" (click)="editCliente(cliente.id)" title="Editar">U</button>
+              <button type="button" class="delete-btn" (click)="deleteCliente(cliente.id)" title="Eliminar">X</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div *ngIf="!loading && clientes.length === 0">
+      <p>No hay clientes disponibles</p>
+    </div>
+    <!-- Inline compact form to add clientes (connected to endpoint) -->
+    <div class="inline-form">
+      <form [formGroup]="clienteForm" (ngSubmit)="onSubmit()" class="inline-form-row">
+        <label for="nombre-inline">Nombre:</label>
+        <input id="nombre-inline" type="text" formControlName="nombre" />
+        <label for="email-inline">Email:</label>
+        <input id="email-inline" type="email" formControlName="email" />
+        <label for="telefono-inline">Teléfono:</label>
+        <input id="telefono-inline" type="text" formControlName="telefono" />
+        <button type="submit" [disabled]="clienteForm.invalid">{{ editingId !== null ? 'Actualizar' : 'Añadir' }}</button>
+        <button *ngIf="editingId !== null" type="button" (click)="editingId = null; clienteForm.reset({ nombre: '', email: '', telefono: '' })" class="cancel-btn">Cancelar</button>
+      </form>
+      <div class="messages">
+        <span class="success" *ngIf="successMessage">{{ successMessage }}</span>
+        <span class="error" *ngIf="errorMessage">{{ errorMessage }}</span>
+      </div>
+    </div>
   </div>
 </div>

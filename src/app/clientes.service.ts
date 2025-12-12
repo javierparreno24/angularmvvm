@@ -7,43 +7,40 @@ import { Observable, of } from 'rxjs';
 })
 export class ClientesService {
 
- 
-private apiUrl = 'http://localhost/phpulse/index.php';  // URL base de la API
+  private apiUrl = '/phpulse/index.php';
 
-// Datos
-private clientesData = [
-  { id: 1, nombre: 'Alvaro García', email: 'alvagar@example.com', telefono: '123456789' },
-  { id: 2, nombre: 'Paula Gorgoño', email: 'paulagor@example.com', telefono: '987654321' },
-  { id: 3, nombre: 'Pedro Perez', email: 'pperez@example.com', telefono: '555123456' }
-];
-    
-constructor(private http: HttpClient) { }
+  // Datos mock
+  private clientesData = [
+    { id: 1, nombre: 'Alvaro García', email: 'alvagar@example.com', telefono: '123456789' },
+    { id: 2, nombre: 'Paula Gorgoño', email: 'paulagor@example.com', telefono: '987654321' },
+    { id: 3, nombre: 'Pedro Perez', email: 'pperez@example.com', telefono: '555123456' }
+  ];
+      
+  constructor(private http: HttpClient) { }
 
-      // Método genérico para obtener datos (GET)
+  // Método genérico para obtener datos (GET)
   getData(action: string): Observable<any> {
     if (action === 'clientes') {
       return of(this.clientesData);
     }
-    const url = `http://localhost:3000/${action}`;  // URL dinámica basada en la acción
-    return this.http.get<any>(url);  // Hacer la solicitud GET
+    return of([]);
   }
 
   // Método genérico para enviar datos (POST)
   postData(action: string, data: any): Observable<any> {
-    const url = `${this.apiUrl}?action=${action}`;  // URL dinámica basada en la acción
-    return this.http.post<any>(url, data);  // Hacer la solicitud POST
+    const mock = { id: Date.now(), ...data };
+    return of(mock);
   }
 
   // Método genérico para actualizar datos (PUT)
   putData(action: string, data: any): Observable<any> {
-    const url = `${this.apiUrl}?action=${action}`;  // URL dinámica basada en la acción
-    return this.http.put<any>(url, data);  // Hacer la solicitud PUT
+    const mock = { id: data.id, ...data };
+    return of(mock);
   }
 
   // Método genérico para eliminar datos (DELETE)
   deleteData(action: string, id: number): Observable<any> {
-    const url = `${this.apiUrl}?action=${action}&id=${id}`;  // URL dinámica con el id
-    return this.http.delete<any>(url);  // Hacer la solicitud DELETE
+    return of({ success: true });
   }
-    }
+}
 
