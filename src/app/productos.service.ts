@@ -14,8 +14,8 @@ private apiUrl = 'http://localhost/phpulse/index.php';  // URL base de la API
 // Datos 
 private productosData = [
   { id: 1, nombre: 'Pantalón vaquero', precio: 39.99, categoria: 'Pantalones' },
-  { id: 2, nombre: 'Gorra de béisbol', precio: 14.99, categoria: 'Zapatillas' },
-  { id: 3, nombre: 'Bolso de cuero', precio: 79.99, categoria: 'Sin categoría' }
+  { id: 2, nombre: 'Gorra de béisbol', precio: 14.99, categoria: 'Accesorios' },
+  { id: 3, nombre: 'Bolso de cuero', precio: 79.99, categoria: 'Accesorios' }
 ];
     
 constructor(private http: HttpClient) { }
