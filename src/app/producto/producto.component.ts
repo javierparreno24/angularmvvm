@@ -2,9 +2,9 @@ import { Component } from '@angular/core';
 import { ProductosService } from '../productos.service';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: '../app.component.html',
-  styleUrls: ['../app.component.scss']
+  selector: 'app-producto',
+  templateUrl: './producto.component.html',
+  styleUrls: ['./producto.component.scss']
 })
 export class ProductoComponent {
   title = 'angularmvvm';

@@ -1,7 +1,7 @@
 
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 
 @Injectable({
@@ -10,12 +10,22 @@ import { Observable } from 'rxjs';
 export class ProductosService {
 
 private apiUrl = 'http://localhost/phpulse/index.php';  // URL base de la API
+
+// Datos 
+private productosData = [
+  { id: 1, nombre: 'Pantalón vaquero', precio: 39.99, categoria: 'Camisetas' },
+  { id: 2, nombre: 'Gorra de béisbol', precio: 14.99, categoria: 'Zapatillas' },
+  { id: 3, nombre: 'Bolso de cuero', precio: 79.99, categoria: 'Sin categoría' }
+];
     
 constructor(private http: HttpClient) { }
 
       // Método genérico para obtener datos (GET)
   getData(action: string): Observable<any> {
-    const url = `http://localhost:3000/productos`;  // URL dinámica basada en la acción
+    if (action === 'productos') {
+      return of(this.productosData);
+    }
+    const url = `http://localhost:3000/${action}`;  // URL dinámica basada en la acción
     return this.http.get<any>(url);  // Hacer la solicitud GET
   }
 

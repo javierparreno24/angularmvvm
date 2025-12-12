@@ -1,5 +1,32 @@
-<router-outlet></router-outlet>
-  <div *ngIf="!loading">
-    <h2>Datos clientes:</h2>
-    <pre>{{ clientes | json }}</pre>
+<div>
+  <div *ngIf="loading">
+    <p>Cargando clientes...</p>
   </div>
+  <div *ngIf="!loading && clientes.length > 0">
+    <table class="clients-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre</th>
+          <th>Email</th>
+          <th>Teléfono</th>
+          <th>Operaciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cliente of clientes; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ cliente.nombre }}</td>
+          <td>{{ cliente.email }}</td>
+          <td>{{ cliente.telefono }}</td>
+          <td class="operations">
+            <button class="delete-btn">X</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div *ngIf="!loading && clientes.length === 0">
+    <p>No hay clientes disponibles</p>
+  </div>
+</div>

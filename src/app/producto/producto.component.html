@@ -2,8 +2,33 @@
   <div *ngIf="loading">
     <p>Cargando productos...</p>
   </div>
-  <div *ngIf="!loading">
-    <h2>Datos productos:</h2>
-    <pre>{{ productos | json }}</pre>
+  <div *ngIf="!loading && productos.length > 0">
+    <table class="products-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre</th>
+          <th>Precio</th>
+          <th>Categoría</th>
+          <th>Operaciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let producto of productos; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ producto.nombre }}</td>
+          <td>${{ producto.precio }}</td>
+          <td>{{ producto.categoria }}</td>
+          <td class="operations">
+            <button class="delete-btn">X</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div *ngIf="!loading && productos.length === 0">
+    <p>No hay productos disponibles</p>
   </div>
 </div>
+
+

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -9,12 +9,22 @@ export class ClientesService {
 
  
 private apiUrl = 'http://localhost/phpulse/index.php';  // URL base de la API
+
+// Datos
+private clientesData = [
+  { id: 1, nombre: 'Alvaro García', email: 'alvagar@example.com', telefono: '123456789' },
+  { id: 2, nombre: 'Paula Gorgoño', email: 'paulagor@example.com', telefono: '987654321' },
+  { id: 3, nombre: 'Pedro Perez', email: 'pperez@example.com', telefono: '555123456' }
+];
     
 constructor(private http: HttpClient) { }
 
       // Método genérico para obtener datos (GET)
   getData(action: string): Observable<any> {
-    const url = `http://localhost:3000/clientes`;  // URL dinámica basada en la acción
+    if (action === 'clientes') {
+      return of(this.clientesData);
+    }
+    const url = `http://localhost:3000/${action}`;  // URL dinámica basada en la acción
     return this.http.get<any>(url);  // Hacer la solicitud GET
   }
 
