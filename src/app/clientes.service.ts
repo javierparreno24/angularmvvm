@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ClientesService {
 
-  private apiUrl = '/phpulse/index.php';
+  private baseUrl = '/api';
 
-  // Datos mock
+  // Datos mock (fallback si la API no responde)
   private clientesData = [
     { id: 1, nombre: 'Alvaro García', email: 'alvagar@example.com', telefono: '123456789' },
     { id: 2, nombre: 'Paula Gorgoño', email: 'paulagor@example.com', telefono: '987654321' },
@@ -18,29 +19,58 @@ export class ClientesService {
       
   constructor(private http: HttpClient) { }
 
-  // Método genérico para obtener datos (GET)
+  // GET /api/clientes
   getData(action: string): Observable<any> {
     if (action === 'clientes') {
-      return of(this.clientesData);
+      return this.http.get<any[]>(`${this.baseUrl}/clientes`).pipe(
+        catchError(err => {
+          console.error('Error fetching clientes from API, returning mock', err);
+          return of(this.clientesData);
+        })
+      );
     }
     return of([]);
   }
 
-  // Método genérico para enviar datos (POST)
+  // POST /api/clientes
   postData(action: string, data: any): Observable<any> {
-    const mock = { id: Date.now(), ...data };
-    return of(mock);
+    if (action === 'clientes') {
+      return this.http.post<any>(`${this.baseUrl}/clientes`, data).pipe(
+        catchError(err => {
+          console.error('Error posting cliente, returning mock-created', err);
+          const mock = { id: Date.now(), ...data };
+          return of(mock);
+        })
+      );
+    }
+    return of(null);
   }
 
-  // Método genérico para actualizar datos (PUT)
+  // PUT /api/clientes/:id
   putData(action: string, data: any): Observable<any> {
-    const mock = { id: data.id, ...data };
-    return of(mock);
+    if (action === 'clientes') {
+      return this.http.put<any>(`${this.baseUrl}/clientes/${data.id}`, data).pipe(
+        catchError(err => {
+          console.error('Error updating cliente, returning patched mock', err);
+          const mock = { id: data.id, ...data };
+          return of(mock);
+        })
+      );
+    }
+    return of(null);
   }
 
-  // Método genérico para eliminar datos (DELETE)
+  // DELETE /api/clientes/:id
   deleteData(action: string, id: number): Observable<any> {
-    return of({ success: true });
+    if (action === 'clientes') {
+      return this.http.delete<any>(`${this.baseUrl}/clientes/${id}`).pipe(
+        catchError(err => {
+          console.error('Error deleting cliente, returning success mock', err);
+          return of({ success: true });
+        })
+      );
+    }
+    return of({ success: false });
   }
 }
 

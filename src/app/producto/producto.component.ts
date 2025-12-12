@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ProductosService } from '../productos.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-producto',
@@ -144,17 +145,26 @@ export class ProductoComponent implements OnInit {
 
 
     getProductos(): void {
-      this.productosService.getData('productos').subscribe({
-        next: (data) => {
-          this.productos = data;  // Asignar los datos de productos
-          this.data = data;  // Asignar la respuesta a la variable 'data'
-          // Derivar lista única de categorías desde los productos
+      this.loading = true;
+      forkJoin({
+        productos: this.productosService.getData('productos'),
+        categorias: this.productosService.getCategorias()
+      }).subscribe({
+        next: ({ productos, categorias }) => {
+          // Manejar diferentes formas de respuesta (array directo o objeto { value: [...] })
+          const prodList = Array.isArray(productos) ? productos : (productos && productos.value) ? productos.value : [];
+          const catList = Array.isArray(categorias) ? categorias : (categorias && categorias.value) ? categorias.value : [];
+          const catMap = new Map((catList as any[]).map((c: any) => [c.id, c.nombre]));
+          // Mapear productos para añadir campo 'categoria' basado en categoriaId si existe
+          this.productos = (prodList as any[]).map(p => ({ ...p, categoria: p.categoria || catMap.get(p.categoriaId) || '' }));
+          this.data = productos;
           this.categories = Array.from(new Set(this.productos.map((p: any) => p.categoria).filter(Boolean)));
-          this.loading = false;   // Detener el indicador de carga
+          this.loading = false;
         },
         error: (err) => {
-          this.error = 'Error al cargar productos';  // Manejar errores
+          this.error = 'Error al cargar productos o categorías';
           console.error(err);
+          this.loading = false;
         }
       });
     }

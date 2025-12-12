@@ -99,21 +99,33 @@ ngOnInit() {
 getClientes(): void {
     this.clientesService.getData('clientes').subscribe({
       next: (data) => {
-        this.clientes = data;  // Asignar los datos de productos
-        this.data = data;  // Asignar la respuesta a la variable 'data'
-        this.loading = false;   // Detener el indicador de carga
+        // Aceptar tanto array directo como formato { value: [...] }
+        const list = Array.isArray(data) ? data : (data && data.value) ? data.value : [];
+        this.clientes = list;
+        this.data = data;
+        this.loading = false;
       },
       error: (err) => {
-        this.error = 'Error al cargar productos';  // Manejar errores
+        this.error = 'Error al cargar clientes';
         console.error(err);
+        this.loading = false;
       }
     });
 }
 
 deleteCliente(id: number): void {
-  if (confirm('¿Está seguro de que desea eliminar este cliente?')) {
-    this.clientes = this.clientes.filter(c => c.id !== id);
-  }
+  if (!confirm('¿Está seguro de que desea eliminar este cliente?')) return;
+  // Llamar al backend para eliminar; si falla, eliminar localmente como fallback
+  this.clientesService.deleteData('clientes', id).subscribe({
+    next: (res) => {
+      // Si el backend responde correctamente, refrescar desde API
+      this.getClientes();
+    },
+    error: (err) => {
+      console.error('Error eliminando cliente en API, eliminando localmente', err);
+      this.clientes = this.clientes.filter(c => c.id !== id);
+    }
+  });
 }
 
 editCliente(id: number): void {
